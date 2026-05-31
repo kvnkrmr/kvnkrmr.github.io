@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kevin Kraemer — Interactive CV</title>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      padding: 2.5rem 1rem 1rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .tagline {
+      margin-top: 0.4rem;
+      font-size: 1rem;
+      color: #8b949e;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 1200px;
+      padding: 1rem 1rem 2rem;
+      flex: 1;
+    }
+
+    #sankey {
+      width: 100%;
+      height: 70vh;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Kevin Kraemer</h1>
+    <p class="tagline">Interactive CV</p>
+  </header>
+  <main>
+    <div id="sankey"></div>
+  </main>
+  <script>
+    const nodeLabels = [
+      // Sources (0–4)
+      "BSc Physics",
+      "MSc Physics",
+      "AiF Projekt GmbH",
+      "enervis energy advisors",
+      "ProjectTogether",
+      // Skills (5–17)
+      "Mathematics",
+      "Physics",
+      "Computer Science",
+      "Data Science",
+      "Energy Economics",
+      "Python",
+      "Matlab",
+      "TeX",
+      "Communication",
+      "Presentations",
+      "Reasoning",
+      "Lab Work",
+      "Scientific Research",
+      // Outcomes (18–23)
+      "Research Publications",
+      "Energy Market Models",
+      "Data & ETL Pipelines",
+      "Client Workshops",
+      "Open Source",
+      "Research Projects",
+    ];
+
+    // One color per node; grouped by column
+    const nodeColors = [
+      // Sources — blue
+      "#4C78A8","#4C78A8","#4C78A8","#4C78A8","#4C78A8",
+      // Skills — purple
+      "#9C59D1","#9C59D1","#9C59D1","#9C59D1","#9C59D1",
+      "#9C59D1","#9C59D1","#9C59D1","#9C59D1","#9C59D1",
+      "#9C59D1","#9C59D1","#9C59D1",
+      // Outcomes — green
+      "#54A24B","#54A24B","#54A24B","#54A24B","#54A24B","#54A24B",
+    ];
+
+    const linkSource = [
+      // Sources → Skills
+      0, 0, 0, 0, 0, 0,          // BSc Physics → Mathematics, Physics, Matlab, TeX, Reasoning, Lab Work
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,    // MSc Physics → Mathematics, Physics, Data Science, Python, CS, TeX, Reasoning, Scientific Research, Lab Work, Presentations, Energy Economics
+      2, 2, 2,                            // AiF Projekt GmbH → Communication, Reasoning, Scientific Research
+      3, 3, 3, 3, 3, 3, 3,       // enervis → Energy Economics, Mathematics, Matlab, Python, Data Science, Presentations, Communication
+      4, 4, 4, 4, 4, 4,          // ProjectTogether → Python, Data Science, CS, Energy Economics, Communication, Presentations
+      // Skills → Outcomes
+      5, 5, 5,                   // Mathematics → Research Publications, Energy Market Models, Data & ETL Pipelines
+      6, 6, 6,                   // Physics → Research Publications, Energy Market Models, Research Projects
+      7,                         // Computer Science → Data & ETL Pipelines
+      8, 8, 8,                   // Data Science → Energy Market Models, Data & ETL Pipelines, Research Publications
+      9, 9,                      // Energy Economics → Energy Market Models, Data & ETL Pipelines
+      10, 10, 10,                // Python → Data & ETL Pipelines, Energy Market Models, Open Source
+      11,                        // Matlab → Energy Market Models
+      12, 12,                    // TeX → Research Publications, Research Projects
+      13, 13,                    // Communication → Client Workshops, Research Publications
+      14,                        // Presentations → Client Workshops
+      15,                        // Reasoning → Research Projects
+      16,                        // Lab Work → Research Projects
+      17, 17,                    // Scientific Research → Research Publications, Research Projects
+    ];
+
+    const linkTarget = [
+      // Sources → Skills
+      5, 6, 11, 12, 15, 16,
+      5, 6, 8, 10, 7, 12, 15, 17, 16, 14, 9,
+      13, 15, 17,
+      9, 5, 11, 10, 8, 14, 13,
+      10, 8, 7, 9, 13, 14,
+      // Skills → Outcomes
+      18, 19, 20,
+      18, 19, 23,
+      20,
+      19, 20, 18,
+      19, 20,
+      20, 19, 22,
+      19,
+      18, 23,
+      21, 18,
+      21,
+      23,
+      23,
+      18, 23,
+    ];
+
+    const linkValue = linkSource.map(() => 1);
+
+    const data = [{
+      type: "sankey",
+      orientation: "h",
+      node: {
+        pad: 20,
+        thickness: 24,
+        line: { color: "#30363d", width: 0.5 },
+        label: nodeLabels,
+        color: nodeColors,
+        hovertemplate: "<b>%{label}</b><extra></extra>",
+      },
+      link: {
+        source: linkSource,
+        target: linkTarget,
+        value: linkValue,
+        color: "rgba(150, 150, 180, 0.25)",
+        hovertemplate: "%{source.label} → %{target.label}<extra></extra>",
+      },
+    }];
+
+    const layout = {
+      paper_bgcolor: "#0d1117",
+      plot_bgcolor: "#0d1117",
+      font: { color: "#e6edf3", family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", size: 13 },
+      margin: { l: 20, r: 20, t: 10, b: 10 },
+    };
+
+    const defaultLinkColor = "rgba(150, 150, 180, 0.25)";
+    const activeLinkColor  = "rgba(150, 150, 180, 0.7)";
+    const dimLinkColor     = "rgba(150, 150, 180, 0.04)";
+    let activeNode = null;
+
+    function dimColor(hex) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r},${g},${b},0.15)`;
+    }
+
+    function applyHighlight(gd, nodeIndex) {
+      const connectedLinks = new Set();
+      const connectedNodes = new Set([nodeIndex]);
+      linkSource.forEach((src, i) => {
+        if (src === nodeIndex || linkTarget[i] === nodeIndex) {
+          connectedLinks.add(i);
+          connectedNodes.add(src);
+          connectedNodes.add(linkTarget[i]);
+        }
+      });
+      Plotly.restyle(gd, {
+        "link.color": [linkSource.map((_, i) => connectedLinks.has(i) ? activeLinkColor : dimLinkColor)],
+        "node.color": [nodeColors.map((c, i) => connectedNodes.has(i) ? c : dimColor(c))],
+      });
+    }
+
+    function resetHighlight(gd) {
+      Plotly.restyle(gd, {
+        "link.color": [linkSource.map(() => defaultLinkColor)],
+        "node.color": [nodeColors.slice()],
+      });
+    }
+
+    Plotly.newPlot("sankey", data, layout, { responsive: true, displayModeBar: false })
+      .then(function(gd) {
+        gd.on("plotly_click", function(eventData) {
+          if (!eventData.points.length) return;
+          const pt = eventData.points[0];
+          // Link clicks have a 'source' property; node clicks don't
+          if (pt.source !== undefined) return;
+          const idx = pt.pointNumber;
+          if (activeNode === idx) {
+            activeNode = null;
+            resetHighlight(gd);
+          } else {
+            activeNode = idx;
+            applyHighlight(gd, idx);
+          }
+        });
+
+        gd.on("plotly_doubleclick", function() {
+          activeNode = null;
+          resetHighlight(gd);
+        });
+      });
+  </script>
+</body>
+</html>
