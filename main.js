@@ -1,7 +1,15 @@
 const panel = document.getElementById("detail-panel");
 
+// Wandelt http(s)-URLs in einem Text in klickbare Links um (doi.org → "DOI →").
+function linkify(text) {
+  return text.replace(/(https?:\/\/[^\s]+)/g, (url) => {
+    const label = url.includes("doi.org") ? "DOI →" : url;
+    return `<a href="${url}" target="_blank" rel="noopener">${label}</a>`;
+  });
+}
+
 function renderPanel(idx) {
-  const d = nodeData[idx];
+  const d = nodeDetail[idx];
   if (!d) {
     panel.innerHTML = '<p class="panel-instruction">Keine Details verfügbar.</p>';
     return;
@@ -10,7 +18,7 @@ function renderPanel(idx) {
     ? `<p class="panel-subtitle">${d.subtitle}</p>`
     : "";
   const items = d.items
-    .map(item => `<li>${item}</li>`)
+    .map(item => `<li>${linkify(item)}</li>`)
     .join("");
   const link = d.url
     ? `<a class="panel-link" href="${d.url}" target="_blank" rel="noopener">Zum Projekt →</a>`
@@ -30,6 +38,7 @@ function resetPanel() {
 const data = [{
   type: "sankey",
   orientation: "h",
+  arrangement: "fixed",
   node: {
     pad: 20,
     thickness: 24,
@@ -91,8 +100,61 @@ function resetHighlight(gd) {
   });
 }
 
+// Berechnet gleichmäßig verteilte y-Positionen für eine Plot-Höhe H (px).
+// Knotenhöhen sind flussproportional; wir rekonstruieren Plotlys Skala, damit
+// die Lücken (oben, zwischen, unten) in jeder Spalte wirklich gleich sind.
+function computeEvenY(H) {
+  const pad = data[0].node.pad;
+  const n = nodeX.length;
+
+  // Knotenwerte = max(eingehend, ausgehend) der Linkwerte.
+  const inSum = new Array(n).fill(0);
+  const outSum = new Array(n).fill(0);
+  linkSource.forEach((s, k) => {
+    outSum[s] += linkValue[k];
+    inSum[linkTarget[k]] += linkValue[k];
+  });
+  const value = Array.from({ length: n }, (_, i) => Math.max(inSum[i], outSum[i]));
+
+  // Knoten nach Spalte (x-Wert) gruppieren, Reihenfolge = Knotenindex.
+  const cols = new Map();
+  nodeX.forEach((x, i) => { (cols.get(x) || cols.set(x, []).get(x)).push(i); });
+  const colArrays = [...cols.values()];
+  const maxN = Math.max(...colArrays.map(c => c.length));
+  const Vmax = Math.max(...colArrays.map(c => c.reduce((a, i) => a + value[i], 0)));
+  const scale = (H - (maxN - 1) * pad) / Vmax; // gleiche Plotly-Skala für alle Spalten
+
+  const y = nodeY.slice();
+  colArrays.forEach(ids => {
+    const heights = ids.map(i => value[i] * scale);
+    const totalH = heights.reduce((a, b) => a + b, 0);
+    const gap = (H - totalH) / (ids.length + 1); // gleiche Lücke oben, zwischen, unten
+    let cursor = gap;
+    ids.forEach((i, k) => {
+      y[i] = (cursor + heights[k] / 2) / H;
+      cursor += heights[k] + gap;
+    });
+  });
+  return y;
+}
+
+// Plot-Höhe (px) der Zeichenfläche aus dem Container ableiten.
+function plotHeight() {
+  const el = document.getElementById("sankey");
+  const h = (el && el.clientHeight) || window.innerHeight * 0.7;
+  return h - layout.margin.t - layout.margin.b;
+}
+
+// y-Positionen schon VOR dem ersten Rendern setzen → kein Springen beim Laden.
+data[0].node.y = computeEvenY(plotHeight());
+
 Plotly.newPlot("sankey", data, layout, { responsive: true, displayModeBar: false })
   .then(function(gd) {
+    // Bei Größenänderung neu verteilen.
+    window.addEventListener("resize", () => {
+      Plotly.restyle(gd, { "node.y": [computeEvenY(plotHeight())] });
+    });
+
     gd.on("plotly_click", function(eventData) {
       if (!eventData.points.length) return;
       const pt = eventData.points[0];

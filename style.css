@@ -96,6 +96,16 @@ main {
   line-height: 1.5;
 }
 
+#detail-panel .panel-items a {
+  color: #58a6ff;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+#detail-panel .panel-items a:hover {
+  text-decoration: underline;
+}
+
 #detail-panel .panel-link {
   display: inline-block;
   margin-top: 0.25rem;

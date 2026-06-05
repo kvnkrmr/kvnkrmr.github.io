@@ -1,299 +1,200 @@
-const nodeLabels = [
-  // Quellen (0–4)
-  "BSc Physik",
-  "MSc Physik",
-  "AiF Projekt GmbH",
-  "enervis energy advisors GmbH",
-  "ProjectTogether gGmbH",
-  // Fähigkeiten (5–17)
-  "Mathematik",
-  "Physik",
-  "Informatik",
-  "Data Science",
-  "Energiewirtschaft",
-  "Python",
-  "Matlab",
-  "LaTeX",
-  "Kommunikation",
-  "Präsentationen",
-  "Analytisches Denken",
-  "Laborarbeit",
-  "Wissenschaftliches Arbeiten",
-  // Ergebnisse (18–23)
-  "Veröffentlichungen",
-  "Energiemarktmodelle",
-  "Daten- & ETL-Pipelines",
-  "Kunden-Workshops",
-  "Open Source",
-  "Forschungsprojekte",
-];
+// ───────────────────────────────────────────────────────────────────────────
+// Single source of truth: every node is defined once, every edge once.
+// The Plotly arrays at the bottom are DERIVED — never hand-maintain indices.
+// ───────────────────────────────────────────────────────────────────────────
 
-const nodeColors = [
-  // Quellen — blau
-  "#4C78A8","#4C78A8","#4C78A8","#4C78A8","#4C78A8",
-  // Fähigkeiten — lila
-  "#9C59D1","#9C59D1","#9C59D1","#9C59D1","#9C59D1",
-  "#9C59D1","#9C59D1","#9C59D1","#9C59D1","#9C59D1",
-  "#9C59D1","#9C59D1","#9C59D1",
-  // Ergebnisse — grün
-  "#54A24B","#54A24B","#54A24B","#54A24B","#54A24B","#54A24B",
-];
+const GROUP_STYLE = {
+  source:  { color: "#4C78A8", x: 0.001 }, // linke Spalte (Quellen)
+  skill:   { color: "#9C59D1", x: 0.5   }, // mittlere Spalte (Fähigkeiten)
+  outcome: { color: "#54A24B", x: 0.99  }, // rechte Spalte (Ergebnisse)
+};
 
-const linkSource = [
-  // Quellen → Fähigkeiten
-  0, 0, 0, 0, 0, 0,
-  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-  2, 2, 2,
-  3, 3, 3, 3, 3, 3, 3,
-  4, 4, 4, 4, 4, 4,
-  // Fähigkeiten → Ergebnisse
-  5, 5, 5,
-  6, 6, 6,
-  7,
-  8, 8, 8,
-  9, 9,
-  10, 10, 10,
-  11,
-  12, 12,
-  13, 13,
-  14,
-  15,
-  16,
-  17, 17,
-];
-
-const linkTarget = [
-  // Quellen → Fähigkeiten
-  5, 6, 11, 12, 15, 16,
-  5, 6, 8, 10, 7, 12, 15, 17, 16, 14, 9,
-  13, 15, 17,
-  9, 5, 11, 10, 8, 14, 13,
-  10, 8, 7, 9, 13, 14,
-  // Fähigkeiten → Ergebnisse
-  18, 19, 20,
-  18, 19, 23,
-  20,
-  19, 20, 18,
-  19, 20,
-  20, 19, 22,
-  19,
-  18, 23,
-  21, 18,
-  21,
-  23,
-  23,
-  18, 23,
-];
-
-const linkValue = linkSource.map((src) => {
-  if (src >= 5 && src <= 17) {
-    const nIn  = linkTarget.filter(t => t === src).length;
-    const nOut = linkSource.filter(s => s === src).length;
-    return nIn / nOut;
-  }
-  return 1;
-});
-
-function evenY(n) {
-  return Array.from({length: n}, (_, i) => (i + 0.5) / n);
-}
-const nodeX = [...Array(5).fill(0.001), ...Array(13).fill(0.5), ...Array(6).fill(0.999)];
-const nodeY = [...evenY(5), ...evenY(13), ...evenY(6)];
-
-const nodeData = {
+const NODES = [
   // Quellen
-  0: {
+  { id: "bsc", label: "BSc Physik", group: "source", detail: {
     title: "BSc Physik",
-    subtitle: "2013 – 2016",
+    subtitle: "2013 – 2016, Universität des Saarlandes, Saarbrücken",
     items: [
-      "Universität des Saarlandes, Saarbrücken",
       "Nebenfach: Mathematik",
       "Bachelorarbeit am Leibniz-Institut für Neue Materialien: Performance Evaluation of Supercapacitors Employing Nanoporous Carbon Materials",
       "Abschlussnote: 1,9",
     ],
-  },
-  1: {
+  }},
+  { id: "msc", label: "MSc Physik", group: "source", detail: {
     title: "MSc Physik",
-    subtitle: "2016 – 2020",
+    subtitle: "2016 – 2020, Karlsruher Institut für Technologie (KIT), Karlsruhe",
     items: [
-      "Karlsruher Institut für Technologie (KIT)",
       "Schwerpunkt: Theorie der Kondensierten Materie",
       "Ergänzung: Theoretische Teilchenphysik",
       "Nebenfach: Experimentelle Nanophysik",
       "Nichtphysikalisches Fach: Energiesysteme und -technik (EPFL-Auslandssemester)",
       "Masterarbeit (mit PTV Group): Machine Learning Approaches for Population Estimation for Travel Demand Modelling",
-      "Auslandssemester an der EPFL in Lausanne, 2017–2018",
+      "Auslandssemester an der EPFL in Lausanne, 2017 – 2018",
       "Abschlussnote: 1,4",
     ],
-  },
-  2: {
-    title: "AiF Projekt GmbH",
-    subtitle: "Okt. 2020 – Jul. 2021",
+  }},
+  { id: "aif", label: "AiF Projekt GmbH", group: "source", detail: {
+    title: "Wissenschaftlicher Mitarbeiter",
+    subtitle: "Okt. 2020 – Jul. 2021, AiF Projekt GmbH, Berlin",
     items: [
-      "Wissenschaftlicher Mitarbeiter, Berlin",
       "Erstellung von Gutachten in der Forschungsförderung",
+      "Fachliche Bewertung und schriftliche Begutachtung von Förderanträgen",
     ],
-  },
-  3: {
-    title: "enervis energy advisors",
-    subtitle: "Aug. 2021 – Jun. 2024",
+  }},
+  { id: "enervis", label: "enervis energy advisors GmbH", group: "source", detail: {
+    title: "Mathematiker, Analyst",
+    subtitle: "Aug. 2021 – Jun. 2024, enervis energy advisors GmbH, Berlin",
     items: [
-      "Mathematiker, Berlin",
-      "Alleinige Entwicklungsverantwortung für ein Preisprognosemodell für europäische Herkunftsnachweise bis 2030",
-      "Implementierung von gemischt-ganzzahligen Optimierungsproblemen (Matlab & Xpress-MP) zur Erlösprognose von Großbatteriespeichern und erneuerbaren Anlagen",
+      "Alleinige Entwicklung eines Preisprognosemodells für europäische Herkunftsnachweise bis 2030",
+      "Gemischt-ganzzahlige Optimierung (Matlab, Xpress-MP) zur Erlösprognose von Großbatteriespeichern und erneuerbaren Anlagen",
       "Analysen von historischen und prognostizierten Strompreisen und Energiemengen (Day-Ahead, Intraday, Regelleistung)",
       "Ergebnisvorstellung gegenüber Kunden im Rahmen von Workshops und Webinaren",
     ],
-  },
-  4: {
-    title: "ProjectTogether",
-    subtitle: "Dez. 2024 – heute",
+  }},
+  { id: "projecttogether", label: "ProjectTogether gGmbH", group: "source", detail: {
+    title: "Data Analyst, Team- und Projektmanager",
+    subtitle: "Dez. 2024 – heute, ProjectTogether gGmbH, Berlin",
     items: [
-      "Data Analyst & Team- und Projektmanager, Berlin",
       "Betrieb einer ETL-Pipeline (Python, Prefect, S3, PostgreSQL) für goal100.studio",
       "Datenpreprocessing von Behördendaten zum Genehmigungsprozess von Windenergieanlagen (Goal100 Monitor)",
       "Parametrisierung eines Bottom-Up-Prognosemodells für den deutschen Windenergie-Ausbau bis 2035",
       "Fachliche Anleitung einer Data Analystin zur Entwicklung einer ETL-Pipeline",
     ],
-  },
+  }},
   // Fähigkeiten
-  5: {
+  { id: "mathematik", label: "Mathematik", group: "skill", detail: {
     title: "Mathematik",
     items: [
-      "Kernfach im BSc & MSc Physik",
-      "Angewendet in der Energiemarktmodellierung und Optimierung bei enervis",
+      "Kernfach im BSc und MSc Physik",
+      "Anwendung in Energiemarktmodellierung und Optimierung bei enervis",
       "Stochastische Methoden, numerische Simulation, analytisches Problemlösen",
     ],
-  },
-  6: {
+  }},
+  { id: "physik", label: "Physik", group: "skill", detail: {
     title: "Physik",
     items: [
-      "Hauptfach im BSc & MSc",
+      "Hauptfach im BSc und MSc",
       "Schwerpunkt auf Theorie der Kondensierten Materie und Theoretischer Teilchenphysik",
       "Physikalische und mathematische Modellierung komplexer Systeme",
     ],
-  },
-  7: {
-    title: "Informatik",
+  }},
+  { id: "datascience", label: "Data Science & Engineering", group: "skill", detail: {
+    title: "Data Science und Data Engineering",
     items: [
+      "Masterarbeit: ML zur Bevölkerungsschätzung für Verkehrsmodelle (mit PTV Group)",
       "ML-Methoden in der Masterarbeit: Random Forests, neuronale Netze",
+      "Statistische Analyse und Preisprognose bei enervis",
+      "Bottom-Up-Prognosemodell für den Windenergie-Ausbau bei ProjectTogether",
       "ETL-Architektur, CI/CD und Datenbankarbeit bei ProjectTogether",
       "PostgreSQL, S3, Prefect-Orchestrierung",
     ],
-  },
-  8: {
-    title: "Data Science",
-    items: [
-      "Masterarbeit: ML zur Bevölkerungsschätzung aus Geodaten",
-      "Statistische Analyse und Preisprognose bei enervis",
-      "Bottom-Up-Prognosemodell für den Windenergie-Ausbau bei ProjectTogether",
-    ],
-  },
-  9: {
+  }},
+  { id: "energiewirtschaft", label: "Energiewirtschaft", group: "skill", detail: {
     title: "Energiewirtschaft",
     items: [
-      "Preisprognose für europäische Herkunftsnachweise (enervis)",
+      "Preisprognose für europäische Herkunftsnachweise (enervis energy advisors GmbH)",
       "Strommarktanalyse: Day-Ahead, Intraday, Regelleistung",
-      "Modellierung von Genehmigungen und Ausbau von Windenergieanlagen (ProjectTogether)",
+      "Modellierung von Genehmigungen und Ausbau von Windenergieanlagen (ProjectTogether gGmbH)",
       "Kurs Energiesysteme an der EPFL (Auslandssemester)",
     ],
-  },
-  10: {
+  }},
+  { id: "python", label: "Python", group: "skill", detail: {
     title: "Python",
     items: [
-      "Masterarbeit: Entwicklung einer ML-Pipeline",
+      "Masterarbeit: Entwicklung der ML-Pipeline (Bevölkerungsschätzung für Verkehrsmodelle)",
       "enervis: Datenanalyse, Dashboards, Analyse-Software",
       "ProjectTogether: pandas, GeoPandas, SciPy, NumPy, Matplotlib, Prefect, pytest",
       "open-MaStR: Wartung und Weiterentwicklung einer Open-Source-Bibliothek",
     ],
-  },
-  11: {
+  }},
+  { id: "matlab", label: "Matlab", group: "skill", detail: {
     title: "Matlab",
     items: [
-      "BSc & MSc Studium",
+      "BSc- und MSc-Studium",
       "enervis: Gemischt-ganzzahlige Optimierung mit Xpress-MP",
       "Erlösprognose für Batteriespeicher und erneuerbare Anlagen",
     ],
-  },
-  12: {
-    title: "TeX",
+  }},
+  { id: "latex", label: "LaTeX", group: "skill", detail: {
+    title: "LaTeX",
     items: [
-      "Satzerstellung von BSc- & MSc-Abschlussarbeiten",
+      "Satzerstellung von BSc- und MSc-Abschlussarbeiten",
       "Gutachtenerstellung bei AiF Projekt GmbH",
       "Wissenschaftliche Veröffentlichungen",
     ],
-  },
-  13: {
+  }},
+  { id: "kommunikation", label: "Kommunikation", group: "skill", detail: {
     title: "Kommunikation",
     items: [
       "Gutachtenerstellung in der Forschungsförderung (AiF)",
-      "Fachliche Anleitung einer Data Analystin (ProjectTogether)",
+      "Fachliche Anleitung einer Data Analystin (ProjectTogether gGmbH)",
       "Teamübergreifende Koordination und technische Dokumentation",
     ],
-  },
-  14: {
+  }},
+  { id: "praesentationen", label: "Präsentationen", group: "skill", detail: {
     title: "Präsentationen",
     items: [
       "Kunden-Workshops und Webinare bei enervis",
       "Ergebnisvorstellungen bei ProjectTogether",
       "Akademische Seminarpräsentationen im MSc",
     ],
-  },
-  15: {
+  }},
+  { id: "analytischesdenken", label: "Analytisches Denken", group: "skill", detail: {
     title: "Analytisches Denken",
     items: [
-      "Analytisches Problemlösen im BSc & MSc Physik entwickelt",
-      "Angewendet bei der Begutachtung von Forschungsförderanträgen (AiF)",
+      "Analytisches Problemlösen im BSc und MSc Physik",
+      "Anwendung bei der Begutachtung von Forschungsförderanträgen (AiF)",
       "Mathematische und physikalische Modellierung unter Unsicherheit",
     ],
-  },
-  16: {
+  }},
+  { id: "laborarbeit", label: "Laborarbeit", group: "skill", detail: {
     title: "Laborarbeit",
     items: [
       "BSc: Experimentelle Arbeit am Leibniz-Institut für Neue Materialien (Superkondensatoren)",
       "EPFL-Auslandssemester: Laborpraktikum zu solar-thermischen Wasserreinigungsprototypen",
     ],
-  },
-  17: {
+  }},
+  { id: "wissenschaftlichesarbeiten", label: "Wissenschaftliches Arbeiten", group: "skill", detail: {
     title: "Wissenschaftliches Arbeiten",
     items: [
-      "Masterarbeit in Kooperation mit der PTV Group (ML für Verkehrsmodelle)",
+      "Masterarbeit mit der PTV Group: ML zur Bevölkerungsschätzung für Verkehrsmodelle",
       "Begutachtung von Forschungsförderanträgen (AiF Projekt GmbH)",
       "Statistische Modellierung und begutachtete Veröffentlichung",
     ],
-  },
+  }},
   // Ergebnisse
-  18: {
+  { id: "veroeffentlichungen", label: "Veröffentlichungen", group: "outcome", detail: {
     title: "Veröffentlichungen",
     items: [
-      "Goal100 Windreport 2025_2 (Jun. 2025) – Analyse des Status quo und Modellierung der Prognose",
+      "Goal100 Windreport 2025/2 (Jun. 2025) – Analyse des Status quo und Modellierung der Prognose",
       "Umweltbundesamt: Analyse eines Unternehmensentwertungsrechts für Strom-Herkunftsnachweise in Deutschland, Climate Change 24/2023",
+      "Oehmichen et al. (2026): Korrigierte und ergänzte Anlagendaten zu genehmigten Windkraftanlagen in Deutschland (Zenodo). https://doi.org/10.5281/zenodo.18697247",
     ],
-  },
-  19: {
+  }},
+  { id: "energiemarktmodelle", label: "Energiemarktmodelle", group: "outcome", detail: {
     title: "Energiemarktmodelle",
     items: [
-      "Preisprognosemodell für europäische Herkunftsnachweise bis 2030 (enervis)",
-      "Gemischt-ganzzahlige Optimierung zur Erlösprognose von Batteriespeichern und erneuerbaren Anlagen (enervis)",
-      "Bottom-Up-Prognosemodell für den deutschen Windenergie-Ausbau bis 2035 (ProjectTogether)",
+      "Preisprognosemodell für europäische Herkunftsnachweise bis 2030 (enervis energy advisors GmbH)",
+      "Gemischt-ganzzahlige Optimierung zur Erlösprognose von Batteriespeichern und erneuerbaren Anlagen (enervis energy advisors GmbH)",
+      "Bottom-Up-Prognosemodell für den deutschen Windenergie-Ausbau bis 2035 (ProjectTogether gGmbH)",
     ],
-  },
-  20: {
-    title: "Daten- & ETL-Pipelines",
+  }},
+  { id: "datenpipelines", label: "Daten- und ETL-Pipelines", group: "outcome", detail: {
+    title: "Daten- und ETL-Pipelines",
     items: [
       "ETL-Pipeline: heterogene Datenquellen → S3 → PostgreSQL für goal100.studio",
       "Datenpreprocessing von Behördendaten für den Goal100 Monitor",
       "open-MaStR: Implementierung eines partiellen Downloads für v0.16.0",
     ],
-  },
-  21: {
+  }},
+  { id: "kundenworkshops", label: "Kunden-Workshops", group: "outcome", detail: {
     title: "Kunden-Workshops",
     items: [
       "Präsentationen von Strom- und Energieprognosen in Kunden-Workshops bei enervis",
       "Webinare zu Ergebnissen der Energiemarktanalyse",
     ],
-  },
-  22: {
+  }},
+  { id: "opensource", label: "Open Source", group: "outcome", detail: {
     title: "Open Source",
     items: [
       "open-MaStR: Python-Bibliothek zur Abfrage und Aufbereitung des Marktstammdatenregisters (BNetzA)",
@@ -303,12 +204,109 @@ const nodeData = {
       "Bearbeitung von Issues und Review von Pull Requests",
     ],
     url: "https://github.com/OpenEnergyPlatform/open-MaStR",
-  },
-  23: {
+  }},
+  { id: "forschungsprojekte", label: "Forschungsprojekte", group: "outcome", detail: {
     title: "Forschungsprojekte",
     items: [
       "Bachelorarbeit: Performance Evaluation of Supercapacitors Employing Nanoporous Carbon Materials – Leibniz-Institut für Neue Materialien",
       "Masterarbeit: Machine Learning Approaches for Population Estimation for Travel Demand Modelling – KIT / PTV Group",
     ],
-  },
-};
+  }},
+];
+
+// Kanten als [Quelle, Ziel] über IDs — jede Zeile ist eine Verbindung.
+const LINKS = [
+  // Quellen → Fähigkeiten
+  ["bsc", "mathematik"],
+  ["bsc", "physik"],
+  ["bsc", "matlab"],
+  ["bsc", "latex"],
+  ["bsc", "analytischesdenken"],
+  ["bsc", "laborarbeit"],
+  ["bsc", "praesentationen"],
+  ["msc", "mathematik"],
+  ["msc", "physik"],
+  ["msc", "datascience"],
+  ["msc", "python"],
+  ["msc", "latex"],
+  ["msc", "analytischesdenken"],
+  ["msc", "wissenschaftlichesarbeiten"],
+  ["msc", "laborarbeit"],
+  ["msc", "praesentationen"],
+  ["msc", "energiewirtschaft"],
+  ["aif", "kommunikation"],
+  ["aif", "analytischesdenken"],
+  ["aif", "wissenschaftlichesarbeiten"],
+  ["enervis", "energiewirtschaft"],
+  ["enervis", "mathematik"],
+  ["enervis", "matlab"],
+  ["enervis", "python"],
+  ["enervis", "datascience"],
+  ["enervis", "praesentationen"],
+  ["enervis", "kommunikation"],
+  ["projecttogether", "python"],
+  ["projecttogether", "datascience"],
+  ["projecttogether", "energiewirtschaft"],
+  ["projecttogether", "kommunikation"],
+  // Fähigkeiten → Ergebnisse
+  ["mathematik", "veroeffentlichungen"],
+  ["mathematik", "energiemarktmodelle"],
+  ["mathematik", "datenpipelines"],
+  ["physik", "veroeffentlichungen"],
+  ["physik", "energiemarktmodelle"],
+  ["physik", "forschungsprojekte"],
+  ["datascience", "energiemarktmodelle"],
+  ["datascience", "datenpipelines"],
+  ["datascience", "veroeffentlichungen"],
+  ["energiewirtschaft", "energiemarktmodelle"],
+  ["energiewirtschaft", "datenpipelines"],
+  ["python", "datenpipelines"],
+  ["python", "energiemarktmodelle"],
+  ["python", "opensource"],
+  ["matlab", "energiemarktmodelle"],
+  ["latex", "veroeffentlichungen"],
+  ["latex", "forschungsprojekte"],
+  ["kommunikation", "kundenworkshops"],
+  ["kommunikation", "veroeffentlichungen"],
+  ["praesentationen", "kundenworkshops"],
+  ["analytischesdenken", "forschungsprojekte"],
+  ["laborarbeit", "forschungsprojekte"],
+  ["wissenschaftlichesarbeiten", "veroeffentlichungen"],
+  ["wissenschaftlichesarbeiten", "forschungsprojekte"],
+];
+
+// ───────────────────────────────────────────────────────────────────────────
+// Derivation — Plotly-Eingaben werden aus dem Modell oben berechnet.
+// ───────────────────────────────────────────────────────────────────────────
+
+function evenY(n) {
+  return Array.from({ length: n }, (_, i) => (i + 0.5) / n);
+}
+
+const idIndex = Object.fromEntries(NODES.map((n, i) => [n.id, i]));
+
+const nodeLabels = NODES.map(n => n.label);
+const nodeColors = NODES.map(n => GROUP_STYLE[n.group].color);
+const nodeX      = NODES.map(n => GROUP_STYLE[n.group].x);
+const nodeDetail = NODES.map(n => n.detail);
+
+// nodeY: jede Gruppe füllt ihre Spalte gleichmäßig (Reihenfolge: source, skill, outcome).
+const nodeY = ["source", "skill", "outcome"].flatMap(group => {
+  const members = NODES.filter(n => n.group === group);
+  return evenY(members.length);
+});
+
+const linkSource = LINKS.map(([s]) => idIndex[s]);
+const linkTarget = LINKS.map(([, t]) => idIndex[t]);
+
+// Flusserhaltung: jede ausgehende Kante eines Fähigkeits-Knotens wird mit nIn/nOut
+// gewichtet, damit der Knoten auf beiden Seiten gleich hoch gefüllt ist.
+const inCount  = {};
+const outCount = {};
+linkSource.forEach((src, i) => {
+  outCount[src] = (outCount[src] || 0) + 1;
+  inCount[linkTarget[i]] = (inCount[linkTarget[i]] || 0) + 1;
+});
+const linkValue = linkSource.map(src =>
+  NODES[src].group === "skill" ? inCount[src] / outCount[src] : 1
+);
