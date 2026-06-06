@@ -53,12 +53,15 @@ const NODES = [
   }},
   { id: "projecttogether", label: "ProjectTogether gGmbH", group: "source", detail: {
     title: "Data Analyst, Team- und Projektmanager",
-    subtitle: "Dez. 2024 – heute, ProjectTogether gGmbH, Berlin",
+    subtitle: "Data Analyst: Dez. 2024 – Jun. 2026<br>Team- und Projektmanager: Mär. 2025 – Jun. 2026<br>ProjectTogether gGmbH, Berlin",
     items: [
       "Betrieb einer ETL-Pipeline (Python, Prefect, S3, PostgreSQL) für goal100.studio",
       "Datenpreprocessing von Behördendaten zum Genehmigungsprozess von Windenergieanlagen (Goal100 Monitor)",
       "Parametrisierung eines Bottom-Up-Prognosemodells für den deutschen Windenergie-Ausbau bis 2035",
       "Fachliche Anleitung einer Data Analystin zur Entwicklung einer ETL-Pipeline",
+      "Analyse von Genehmigungsdauern, Antragsvolumina, EEG-Zahlungen/-Zuschlagsmengen, Gebotswerten und erzeugten Strommengen (BNetzA, Übertragungsnetzbetreiber, Genehmigungsbehörden, Projektierer)",
+      "Hauptverantwortliche Erstellung und Koordination des Goal100 Windreports 2025/2 (inkl. Abstimmung mit externem Designstudio)",
+      "Aufbereitung und Visualisierung komplexer Daten mit Python (Matplotlib, Seaborn, Plotly) und Google Slides",
     ],
   }},
   // Fähigkeiten
@@ -96,6 +99,8 @@ const NODES = [
       "Strommarktanalyse: Day-Ahead, Intraday, Regelleistung",
       "Modellierung von Genehmigungen und Ausbau von Windenergieanlagen (ProjectTogether gGmbH)",
       "Kurs Energiesysteme an der EPFL (Auslandssemester)",
+      "Analyse regulatorischer Rahmenbedingungen (EEG): Genehmigungsdauern, Antragsvolumina, Auktionsergebnisse",
+      "Datenquellen: Bundesnetzagentur, Übertragungsnetzbetreiber, Genehmigungsbehörden, Projektierer",
     ],
   }},
   { id: "python", label: "Python", group: "skill", detail: {
@@ -103,7 +108,7 @@ const NODES = [
     items: [
       "Masterarbeit: Entwicklung der ML-Pipeline (Bevölkerungsschätzung für Verkehrsmodelle)",
       "enervis: Datenanalyse, Dashboards, Analyse-Software",
-      "ProjectTogether: pandas, GeoPandas, SciPy, NumPy, Matplotlib, Prefect, pytest",
+      "ProjectTogether: pandas, GeoPandas, SciPy, NumPy, Matplotlib, Seaborn, Plotly, Prefect, pytest",
       "open-MaStR: Wartung und Weiterentwicklung einer Open-Source-Bibliothek",
     ],
   }},
@@ -129,6 +134,7 @@ const NODES = [
       "Gutachtenerstellung in der Forschungsförderung (AiF)",
       "Fachliche Anleitung einer Data Analystin (ProjectTogether gGmbH)",
       "Teamübergreifende Koordination und technische Dokumentation",
+      "Abstimmung mit externem Designstudio zur Gestaltung des Goal100 Windreports",
     ],
   }},
   { id: "praesentationen", label: "Präsentationen", group: "skill", detail: {
@@ -160,6 +166,23 @@ const NODES = [
       "Masterarbeit mit der PTV Group: ML zur Bevölkerungsschätzung für Verkehrsmodelle",
       "Begutachtung von Forschungsförderanträgen (AiF Projekt GmbH)",
       "Statistische Modellierung und begutachtete Veröffentlichung",
+    ],
+  }},
+  { id: "git", label: "Git", group: "skill", detail: {
+    title: "Git",
+    items: [
+      "Versionskontrolle bei ProjectTogether und enervis (Mitarbeit an der Codebasis)",
+      "open-MaStR: Beiträge und Releases via GitHub",
+      "CI/CD-Anbindung der ETL-Pipeline (ProjectTogether gGmbH)",
+    ],
+  }},
+  { id: "projektmanagement", label: "Projektmanagement", group: "skill", detail: {
+    title: "Projektmanagement",
+    items: [
+      "Team- und Projektmanager bei ProjectTogether gGmbH ab Mär. 2025",
+      "Personaladministration: Urlaubsanträge, Anwesenheitskonten, AU-Meldungen, Zeugniserstellung",
+      "Hauptverantwortlich für den Goal100 Windreport: Analyse, Koordination mit externem Designstudio",
+      "Fachliche Anleitung einer Data Analystin",
     ],
   }},
   // Ergebnisse
@@ -273,6 +296,20 @@ const LINKS = [
   ["laborarbeit", "forschungsprojekte"],
   ["wissenschaftlichesarbeiten", "veroeffentlichungen"],
   ["wissenschaftlichesarbeiten", "forschungsprojekte"],
+  // Quellen → Git
+  ["projecttogether", "git"],
+  ["enervis", "git"],
+  // Quellen → Projektmanagement
+  ["projecttogether", "projektmanagement"],
+  // Git → Ergebnisse
+  ["git", "datenpipelines"],
+  ["git", "opensource"],
+  ["git", "veroeffentlichungen"],
+  // Projektmanagement → Ergebnisse
+  ["projektmanagement", "kundenworkshops"],
+  ["projektmanagement", "veroeffentlichungen"],
+  ["projektmanagement", "datenpipelines"],
+  ["projektmanagement", "forschungsprojekte"],
 ];
 
 // ───────────────────────────────────────────────────────────────────────────
