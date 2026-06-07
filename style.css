@@ -1,7 +1,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: #0d1117;
+  background: #100d0b;
   color: #e6edf3;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   min-height: 100vh;
@@ -13,6 +13,7 @@ body {
 header {
   padding: 2.5rem 1rem 1rem;
   text-align: center;
+  background: radial-gradient(ellipse 80% 120% at 50% -20%, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
 }
 
 header h1 {
@@ -116,4 +117,29 @@ main {
 
 #detail-panel .panel-link:hover {
   text-decoration: underline;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.social-icons a {
+  color: #8b949e;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease, transform 0.15s ease;
+  text-decoration: none;
+}
+
+.social-icons a:hover,
+.social-icons a:focus-visible {
+  color: #e6edf3;
+  transform: scale(1.1);
+}
+
+.social-icons svg {
+  fill: currentColor;
 }
