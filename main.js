@@ -59,8 +59,8 @@ const data = [{
 }];
 
 const layout = {
-  paper_bgcolor: "#0d1117",
-  plot_bgcolor: "#0d1117",
+  paper_bgcolor: "rgba(0, 0, 0, 0)",
+  plot_bgcolor: "rgba(0, 0, 0, 0)",
   font: { color: "#e6edf3", family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", size: 13 },
   margin: { l: 20, r: 20, t: 10, b: 10 },
 };
