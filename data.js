@@ -16,8 +16,7 @@ const NODES = [
     subtitle: "2013 – 2016, Universität des Saarlandes, Saarbrücken",
     items: [
       "Nebenfach: Mathematik",
-      "Bachelorarbeit am Leibniz-Institut für Neue Materialien: Performance Evaluation of Supercapacitors Employing Nanoporous Carbon Materials",
-      "Abschlussnote: 1,9",
+      "Bachelorarbeit am Leibniz-Institut für Neue Materialien: Performance Evaluation of Supercapacitors Employing Nanoporous Carbon Materials"
     ],
   }},
   { id: "msc", label: "MSc Physik", group: "source", detail: {
@@ -30,15 +29,14 @@ const NODES = [
       "Nichtphysikalisches Fach: Energiesysteme und -technik (EPFL-Auslandssemester)",
       "Masterarbeit (mit PTV Group): Machine Learning Approaches for Population Estimation for Travel Demand Modelling",
       "Auslandssemester an der EPFL in Lausanne, 2017 – 2018",
-      "Abschlussnote: 1,4",
     ],
   }},
   { id: "aif", label: "AiF Projekt GmbH", group: "source", detail: {
     title: "Wissenschaftlicher Mitarbeiter",
     subtitle: "Okt. 2020 – Jul. 2021, AiF Projekt GmbH, Berlin",
     items: [
-      "Erstellung von Gutachten in der Forschungsförderung",
       "Fachliche Bewertung und schriftliche Begutachtung von Förderanträgen",
+      "Betreute Programme: Zentrales Innovationsprogramm Mittelstand (ZIM), Bescheinigungsstelle Forschungszulage",
     ],
   }},
   { id: "enervis", label: "enervis energy advisors GmbH", group: "source", detail: {
@@ -115,9 +113,8 @@ const NODES = [
   { id: "matlab", label: "Matlab", group: "skill", detail: {
     title: "Matlab",
     items: [
-      "BSc- und MSc-Studium",
-      "enervis: Gemischt-ganzzahlige Optimierung mit Xpress-MP",
-      "Erlösprognose für Batteriespeicher und erneuerbare Anlagen",
+      "BSc Physik",
+      "enervis: Gemischt-ganzzahlige Optimierung (mit Xpress-MP) für Erlösprognosen für Batteriespeicher und erneuerbare Anlagen",
     ],
   }},
   { id: "latex", label: "LaTeX", group: "skill", detail: {
@@ -214,7 +211,7 @@ const NODES = [
     title: "Kunden-Workshops",
     items: [
       "Präsentationen von Strom- und Energieprognosen in Kunden-Workshops bei enervis",
-      "Webinare zu Ergebnissen der Energiemarktanalyse",
+      "Webinare zu Ergebnissen der Energiemarktanalysen",
     ],
   }},
   { id: "opensource", label: "Open Source", group: "outcome", detail: {
